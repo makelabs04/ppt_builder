@@ -7,9 +7,9 @@ const fs = require('fs');
 const session = require('express-session');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT;
 
-// ─── Middleware ───────────────────────────────────────────────────────────────
+// Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
@@ -20,24 +20,7 @@ app.use(session({
     saveUninitialized: true
 }));
 
-// Make db accessible to routes
-app.set('db', db);
-
-// ─── View Engine ──────────────────────────────────────────────────────────────
-app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, 'views'));
-
-// ─── DB Pool ──────────────────────────────────────────────────────────────────
-const db = mysql.createPool({
-    host:     process.env.DB_HOST     || 'localhost',
-    user:     process.env.DB_USER     || 'root',
-    password: process.env.DB_PASS     || '',
-    database: process.env.DB_NAME     || 'ppt_builder',
-    waitForConnections: true,
-    connectionLimit: 10
-});
-
-// ─── Upload Config ────────────────────────────────────────────────────────────
+// Upload config
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         const dir = path.join(__dirname, 'uploads/images');
@@ -50,11 +33,27 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-// ─── Routes ───────────────────────────────────────────────────────────────────
+// DB (CREATE FIRST)
+const db = mysql.createPool({
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASS,
+    database: process.env.DB_NAME,
+    waitForConnections: true,
+    connectionLimit: 10
+});
+
+app.set('db', db);
+
+// View engine
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
+
+// Routes
 app.use('/', require('./routes/pages'));
 app.use('/api', require('./routes/api')(db, upload));
 
-// ─── Start ────────────────────────────────────────────────────────────────────
+// Start
 app.listen(PORT, () => {
-    console.log(`✅ PPT Builder running at http://localhost:${PORT}`);
+    console.log(`Server running on port ${PORT}`);
 });
