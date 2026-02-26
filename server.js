@@ -5,12 +5,10 @@ const session = require('express-session');
 const path = require('path');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
 
-/* =========================
-   CREATE DATABASE FIRST
-========================= */
+const PORT = process.env.PORT; // IMPORTANT
 
+/* DATABASE */
 const db = mysql.createPool({
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
@@ -20,16 +18,9 @@ const db = mysql.createPool({
     connectionLimit: 10
 });
 
-/* =========================
-   THEN SET IT
-========================= */
-
 app.set('db', db);
 
-/* =========================
-   MIDDLEWARE
-========================= */
-
+/* MIDDLEWARE */
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
@@ -39,17 +30,11 @@ app.use(session({
     saveUninitialized: false
 }));
 
-/* =========================
-   ROUTES
-========================= */
-
+/* ROUTES */
 app.use('/', require('./routes/pages'));
 app.use('/api', require('./routes/api')(db));
 
-/* =========================
-   START
-========================= */
-
-app.listen(PORT, () => {
+/* START SERVER */
+app.listen(PORT, '0.0.0.0', () => {
     console.log(`Server running on port ${PORT}`);
 });
