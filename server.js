@@ -29,7 +29,6 @@ app.use(session({
     resave: false,
     saveUninitialized: false
 }));
-
 /* ROUTES */
 app.use('/', require('./routes/pages'));
 app.use('/api', require('./routes/api')(db));
