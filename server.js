@@ -3,6 +3,7 @@ const express = require('express');
 const mysql = require('mysql2/promise');
 const session = require('express-session');
 const path = require('path');
+const upload = require('./middlewares/upload');
 
 const app = express();
 
@@ -31,7 +32,8 @@ app.use(session({
 }));
 /* ROUTES */
 app.use('/', require('./routes/pages'));
-app.use('/api', require('./routes/api')(db));
+app.use('/api', require('./routes/api')(db, upload));
+
 
 /* START SERVER */
 app.listen(PORT, '0.0.0.0', () => {
