@@ -7,7 +7,7 @@ const upload = require('./middlewares/upload');
 
 const app = express();
 
-const PORT = process.env.PORT; // IMPORTANT
+const PORT = Number(process.env.PORT) || 3000;
 
 /* DATABASE */
 const db = mysql.createPool({
@@ -35,7 +35,6 @@ app.use('/', require('./routes/pages'));
 app.use('/api', require('./routes/api')(db, upload));
 
 
-/* START SERVER */
 app.listen(PORT, '0.0.0.0', () => {
-    console.log(`Server running on port ${PORT}`);
+ console.log(`Server running on port ${PORT}`);
 });
