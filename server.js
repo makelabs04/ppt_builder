@@ -34,7 +34,6 @@ app.use(session({
 app.use('/', require('./routes/pages'));
 app.use('/api', require('./routes/api')(db, upload));
 
-
 app.listen(PORT, '0.0.0.0', () => {
  console.log(`Server running on port ${PORT}`);
 });
